@@ -1,5 +1,6 @@
 import { Brain, Languages, Monitor, MessageSquareText } from "lucide-react";
 import { LeadForm } from "@/components/LeadForm";
+import naturalbotLogo from "@/assets/naturalbot-logo.png";
 
 const benefits = [
   {
@@ -30,14 +31,12 @@ const Index = () => {
       {/* Header */}
       <header className="border-b border-border bg-background py-5">
         <div className="container flex items-center justify-center">
-          <a href="/" className="flex items-center gap-2" aria-label="NaturalBot">
-            <div className="flex size-9 items-center justify-center rounded-lg bg-gradient-cta text-purple-foreground">
-              <MessageSquareText className="size-5" />
-            </div>
-            <span className="text-xl font-extrabold tracking-tight">
-              <span className="text-foreground">Natural</span>
-              <span className="text-magenta">Bot</span>
-            </span>
+          <a href="/" aria-label="NaturalBot">
+            <img
+              src={naturalbotLogo}
+              alt="NaturalBot - Copiloto de vendas com IA para restaurantes"
+              className="h-12 w-auto sm:h-14"
+            />
           </a>
         </div>
       </header>
@@ -79,7 +78,7 @@ const Index = () => {
           <div className="mx-auto mt-10 aspect-video w-full max-w-4xl overflow-hidden rounded-2xl bg-muted shadow-card">
             <iframe
               className="size-full"
-              src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+              src="https://www.youtube.com/embed/UbuqFrCE068?rel=0"
               title="Conheça o Copiloto NaturalBot"
               loading="lazy"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

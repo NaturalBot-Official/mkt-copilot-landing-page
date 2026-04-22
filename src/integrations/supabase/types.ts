@@ -14,7 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      leads: {
+        Row: {
+          celular: string
+          consentimento: boolean
+          created_at: string
+          email: string
+          gerencia_restaurante: boolean
+          id: string
+          nome: string
+          segmento: string
+          trabalha_delivery: boolean
+        }
+        Insert: {
+          celular: string
+          consentimento: boolean
+          created_at?: string
+          email: string
+          gerencia_restaurante: boolean
+          id?: string
+          nome: string
+          segmento: string
+          trabalha_delivery: boolean
+        }
+        Update: {
+          celular?: string
+          consentimento?: boolean
+          created_at?: string
+          email?: string
+          gerencia_restaurante?: boolean
+          id?: string
+          nome?: string
+          segmento?: string
+          trabalha_delivery?: boolean
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

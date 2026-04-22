@@ -39,15 +39,15 @@ const schema = z.object({
     .min(14, "Celular incompleto")
     .max(20, "Celular inválido"),
   gerencia_restaurante: z.enum(["sim", "nao"], {
-    required_error: "Selecione uma opção",
+    message: "Selecione uma opção",
   }),
   trabalha_delivery: z.enum(["sim", "nao"], {
-    required_error: "Selecione uma opção",
+    message: "Selecione uma opção",
   }),
   segmento: z.string().min(1, "Selecione um segmento"),
   captcha: z.string().min(1, "Resolva o captcha"),
   consentimento: z.literal(true, {
-    errorMap: () => ({ message: "É necessário aceitar para continuar" }),
+    message: "É necessário aceitar para continuar",
   }),
 });
 
@@ -97,15 +97,17 @@ export const LeadForm = () => {
       return;
     }
 
-    const { error } = await supabase.from("leads").insert({
-      nome: values.nome,
-      email: values.email,
-      celular: values.celular,
-      segmento: values.segmento,
-      gerencia_restaurante: values.gerencia_restaurante === "sim",
-      trabalha_delivery: values.trabalha_delivery === "sim",
-      consentimento: values.consentimento,
-    });
+    const { error } = await supabase.from("leads").insert([
+      {
+        nome: values.nome,
+        email: values.email,
+        celular: values.celular,
+        segmento: values.segmento,
+        gerencia_restaurante: values.gerencia_restaurante === "sim",
+        trabalha_delivery: values.trabalha_delivery === "sim",
+        consentimento: values.consentimento,
+      },
+    ]);
 
     if (error) {
       toast.error("Erro ao enviar. Tente novamente em instantes.");

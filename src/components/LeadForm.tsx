@@ -4,7 +4,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { CheckCircle2, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+
+const WEBHOOK_URL =
+  "https://backend.fenil.com.br/webhook-forms/receive/aefb2325dea6c3eb0d324ee4573ec56b81cc0e1c323a107232bfbf3699e280dd";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -97,25 +99,24 @@ export const LeadForm = () => {
       return;
     }
 
-    const { error } = await supabase.from("leads").insert([
-      {
-        nome: values.nome,
-        email: values.email,
-        celular: values.celular,
-        segmento: values.segmento,
-        gerencia_restaurante: values.gerencia_restaurante === "sim",
-        trabalha_delivery: values.trabalha_delivery === "sim",
-        consentimento: values.consentimento,
-      },
-    ]);
-
-    if (error) {
+    try {
+      await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nome: values.nome,
+          email: values.email,
+          celular: "55" + values.celular.replace(/\D/g, ""),
+          segmento: values.segmento,
+          gerencia_restaurante: values.gerencia_restaurante === "sim" ? "Sim" : "Não",
+          trabalha_delivery: values.trabalha_delivery === "sim" ? "Sim" : "Não",
+        }),
+      });
+      toast.success("Cadastro enviado com sucesso!");
+      setSubmitted(true);
+    } catch {
       toast.error("Erro ao enviar. Tente novamente em instantes.");
-      return;
     }
-
-    toast.success("Cadastro enviado com sucesso!");
-    setSubmitted(true);
   };
 
   if (submitted) {

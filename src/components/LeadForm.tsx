@@ -1,12 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { CheckCircle2, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 const WEBHOOK_URL =
   "https://backend.fenil.com.br/webhook-forms/receive/aefb2325dea6c3eb0d324ee4573ec56b81cc0e1c323a107232bfbf3699e280dd";
+const N8N_WEBHOOK_URL =
+  "https://n8n.fenil.com.br/webhook/f450f8f1-b821-4212-a389-b08fa37f6a47";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -65,7 +68,7 @@ function maskCelular(v: string) {
 }
 
 export const LeadForm = () => {
-  const [submitted, setSubmitted] = useState(false);
+  const navigate = useNavigate();
   const [captcha, setCaptcha] = useState({ a: 0, b: 0 });
 
   const regenCaptcha = () => {
@@ -100,39 +103,21 @@ export const LeadForm = () => {
     }
 
     try {
-      await fetch(WEBHOOK_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          nome: values.nome,
-          email: values.email,
-          celular: "55" + values.celular.replace(/\D/g, ""),
-          segmento: values.segmento,
-          gerencia_restaurante: values.gerencia_restaurante === "sim" ? "Sim" : "Não",
-          trabalha_delivery: values.trabalha_delivery === "sim" ? "Sim" : "Não",
-        }),
+      const payload = JSON.stringify({
+        nome: values.nome,
+        email: values.email,
+        celular: "55" + values.celular.replace(/\D/g, ""),
+        segmento: values.segmento,
+        gerencia_restaurante: values.gerencia_restaurante === "sim" ? "Sim" : "Não",
+        trabalha_delivery: values.trabalha_delivery === "sim" ? "Sim" : "Não",
       });
-      toast.success("Cadastro enviado com sucesso!");
-      setSubmitted(true);
+      await fetch(WEBHOOK_URL, { method: "POST", headers: { "Content-Type": "application/json" }, body: payload });
+      fetch(N8N_WEBHOOK_URL, { method: "POST", mode: "no-cors", body: payload }).catch(() => {});
+      navigate("/obrigado");
     } catch {
       toast.error("Erro ao enviar. Tente novamente em instantes.");
     }
   };
-
-  if (submitted) {
-    return (
-      <div className="rounded-2xl bg-card p-10 text-center shadow-card">
-        <CheckCircle2 className="mx-auto mb-4 size-14 text-purple" />
-        <h3 className="mb-2 text-2xl font-extrabold text-foreground">
-          Obrigado!
-        </h3>
-        <p className="text-muted-foreground">
-          Recebemos seu cadastro. Em breve nosso time entrará em contato para
-          liberar seu teste do Copiloto.
-        </p>
-      </div>
-    );
-  }
 
   const errors = form.formState.errors;
   const isSubmitting = form.formState.isSubmitting;
